@@ -1,0 +1,13 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+*.tfvars.json
+
+# SSH keys
+Terra-Key-ec2
+Terra-Key-ec2.pub
+*.pem
+
+.env
