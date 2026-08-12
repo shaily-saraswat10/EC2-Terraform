@@ -45,15 +45,21 @@ resource "aws_security_group" "mySg" {
 
 # EC2
 resource "aws_instance" "myInstance" {
+    # count = 2 , creates 2 instances having same name (meta argument)
+    for_each = tomap({     # creates 2 instances having diff name (meta argument)
+        Terra-01 = "t3.micro"
+        Terra-02 = "t3.micro" 
+    })
     key_name = aws_key_pair.myKey.key_name
-    instance_type = var.aws_instance_type
+    instance_type = each.value          # var.aws_instance_type (if single instance)
     vpc_security_group_ids = [aws_security_group.mySg.id]
     ami = var.ami_id
+    user_data = file("install-nginx.sh")   #install the nginx after creating instance
     root_block_device {
-        volume_size = var.root_storage_size
+        volume_size = var.env == "prod" ? 15 : var.root_storage_default_size    #var.root_storage_size
         volume_type = "gp3"
     }
     tags = {
-        Name = "Terra-ec2"
+        Name = each.key    #(name of instance)
     }
 }
